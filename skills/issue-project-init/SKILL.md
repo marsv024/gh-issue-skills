@@ -22,14 +22,29 @@ gh project list --owner "$OWNER"
 
 ## 2. Labels
 
-`references/labels.tsv` lists the standard labels (`name<TAB>description<TAB>colour`). Create the
-missing ones; add the repo's own **component** labels (default `backend`, `frontend`; drop or add
-as fits). Leave GitHub's default labels (`enhancement`, `documentation`, ...) alone unless asked.
+Create the standard labels below (`name|description|colour`). Add the repo's own **component**
+labels (default `backend`, `frontend`; drop or add as fits). Leave GitHub's default labels
+(`enhancement`, `documentation`, ...) alone unless asked.
 
 ```bash
-while IFS=$'\t' read -r n d c; do
+while IFS='|' read -r n d c; do
   gh label create "$n" --repo "$REPO" --description "$d" --color "$c" --force
-done < references/labels.tsv      # path relative to this skill's folder
+done <<'EOF'
+bug|Something isn't working|d73a4a
+feature|New user-facing capability|a2eeef
+tech-debt|Tracked technical debt|fbca04
+epic|Multi-issue effort|5319e7
+backend|Backend / services|0e8a16
+frontend|Frontend / web app|1d76db
+performance|Performance|fef2c0
+security|Security|d93f0b
+testing|Tests / CI / E2E|c5def5
+privacy|Privacy / GDPR|bfdadc
+ai|Addressable by an AI agent without human intervention|7057ff
+needs-context|AI-addressable once a quick check or decision is answered (also carries ai)|fbca04
+needs-human|Needs a device, store/legal/owner decision, external access or a roadmap choice|d93f0b
+wontfix|This will not be worked on|ffffff
+EOF
 gh label list --repo "$REPO"      # create is silent on success: verify
 ```
 
@@ -62,11 +77,43 @@ gh project link "$N" --owner "$OWNER" --repo "$REPO"
 
 ## 4. Document it in the repo
 
-Add a **Work Tracking** section to the repo's agent instructions (`AGENTS.md`, `CLAUDE.md`, or
-both) covering: item-type labels (exactly one per issue), component/topic/routing labels, board
-fields and the RICE formula, the issue-body format (`issue-file`), epics with sub-issues and plans in
-the issue body (`issue-plan-doc`), PR references (`issue-pr-refs`), and "only the orchestrating
-agent edits issues and the board". Commit on a branch, not the default branch.
+Add this section to the repo's agent instructions (`AGENTS.md`, `CLAUDE.md`, or both), filling in
+the `<...>` placeholders (repo, board URL, and the component labels you created in step 2; if the
+skills come from a plugin, say so and name it). Commit on a branch, not the default branch.
+
+```markdown
+## Work Tracking (GitHub Issues)
+
+The backlog lives in **GitHub Issues** (`<owner/repo>`), tracked in the **<board title>** project
+(<board URL>). The issue is the source of truth for context *and* status; refer to work by issue
+number (`#123`) and labels. Workflow skills: `issue-search`, `issue-file`, `issue-start`,
+`issue-pr-refs`, `issue-close-out`, `issue-project-fields`, `issue-score`, `issue-link`,
+`issue-plan-doc`, `issue-file-found`, `issue-audit-scores`, `issue-project-init` (<where they come from>).
+
+**Item types (labels):** `bug`, `feature`, `tech-debt`, `epic` — exactly one per issue.
+**Component labels:** <e.g. `backend`, `frontend`> (as many as apply).
+**Topic labels (optional):** `performance`, `security`, `testing`, `privacy`.
+**Agent routing:** `ai` (addressable by an agent), `needs-context` (also carries `ai`; needs a quick
+answer first), `needs-human` (device, external access, owner decision).
+
+**Project fields:** `Status` (Todo / In Progress / Done), `Reach` (1–5), `Impact` (0.5–3),
+`Confidence (%)`, `Effort (days)`, `RICE = (Reach × Impact × Confidence) / Effort`. Put a
+`**Score:** RICE x = (R × I × C%) / Ed` line in the body so the issue reads standalone.
+
+**Issue body** carries the whole record: Description, Current State, What Needs to Be Done, Why It's
+Important, Related Files, estimate. Link related work with `#n`; express ordering with "blocked by"
+(body text and the dependencies API, see `issue-link`). Large work is an `epic` whose plan lives in
+the issue body and whose slices are sub-issues.
+
+- **Before starting:** search first (`issue-search`); reuse or extend instead of filing duplicates.
+- **While working:** set the item to In Progress and assign it (`issue-start`); branch names carry the
+  issue number (`feat/123-short-desc`). Bugs and tech debt start with a failing test. File unrelated
+  findings as new issues instead of expanding scope (`issue-file-found`).
+- **Finishing:** every PR references its issues (`Closes #n` per issue, `Part of #n` for the epic;
+  `issue-pr-refs`); after merge set Status = Done and update related issues (`issue-close-out`).
+- `gh` needs the `project` scope (`gh auth refresh -s project`). Only the orchestrating agent
+  changes issue/project status; delegated sub-agents do not create, edit or close issues.
+```
 
 ## 5. Optional: seed an epic
 
