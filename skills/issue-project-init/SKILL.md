@@ -90,15 +90,27 @@ number (`#123`) and labels. Workflow skills: `issue-search`, `issue-file`, `issu
 `issue-pr-refs`, `issue-close-out`, `issue-project-fields`, `issue-score`, `issue-link`,
 `issue-plan-doc`, `issue-file-found`, `issue-audit-scores`, `issue-project-init` (<where they come from>).
 
-**Item types (labels):** `bug`, `feature`, `tech-debt`, `epic` — exactly one per issue.
-**Component labels:** <e.g. `backend`, `frontend`> (as many as apply).
-**Topic labels (optional):** `performance`, `security`, `testing`, `privacy`.
-**Agent routing:** `ai` (addressable by an agent), `needs-context` (also carries `ai`; needs a quick
-answer first), `needs-human` (device, external access, owner decision).
+### Labels
 
-**Project fields:** `Status` (Todo / In Progress / Done), `Reach` (1–5), `Impact` (0.5–3),
-`Confidence (%)`, `Effort (days)`, `RICE = (Reach × Impact × Confidence) / Effort`. Put a
-`**Score:** RICE x = (R × I × C%) / Ed` line in the body so the issue reads standalone.
+| Group | Labels | Rule |
+|---|---|---|
+| Type | `bug`, `feature`, `tech-debt`, `epic` | Exactly one per issue |
+| Component | <e.g. `backend`, `frontend`> | As many as apply |
+| Topic | `performance`, `security`, `testing`, `privacy` | Optional |
+| Agent routing | `ai`, `needs-context`, `needs-human` | Optional. `ai` = an agent can do it unattended; `needs-context` = an agent can once a quick question is answered (also carries `ai`); `needs-human` = needs a device, external access or an owner decision |
+
+### Project fields
+
+| Field | Values | Notes |
+|---|---|---|
+| Status | Todo / In Progress / Done | Set by the orchestrating agent only |
+| Reach | 1–5 | How many users it touches |
+| Impact | 0.5–3 | Size of the effect |
+| Confidence (%) | whole percent, e.g. `70` | |
+| Effort (days) | number | |
+| RICE | `(Reach × Impact × Confidence) / Effort` | Also written in the body as `**Score:** RICE x = (R × I × C%) / Ed` so the issue reads standalone |
+
+### Issue body and workflow
 
 **Issue body** carries the whole record: Description, Current State, What Needs to Be Done, Why It's
 Important, Related Files, estimate. Link related work with `#n`; express ordering with "blocked by"
