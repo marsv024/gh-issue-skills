@@ -1,0 +1,11 @@
+{
+  "name": "gh-issue-skills",
+  "owner": { "name": "marsv024" },
+  "plugins": [
+    {
+      "name": "gh-issue-skills",
+      "source": "./",
+      "description": "GitHub Issues + Projects v2 workflow skills (search, file, RICE scoring, plans, links, PR references, close-out)."
+    }
+  ]
+}

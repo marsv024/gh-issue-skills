@@ -1,0 +1,14 @@
+bug	Something isn't working	d73a4a
+feature	New user-facing capability	a2eeef
+tech-debt	Tracked technical debt	fbca04
+epic	Multi-issue effort	5319e7
+backend	Backend / services	0e8a16
+frontend	Frontend / web app	1d76db
+performance	Performance	fef2c0
+security	Security	d93f0b
+testing	Tests / CI / E2E	c5def5
+privacy	Privacy / GDPR	bfdadc
+ai	Addressable by an AI agent without human intervention	7057ff
+needs-context	AI-addressable once a quick check or decision is answered (also carries ai)	fbca04
+needs-human	Needs a device, store/legal/owner decision, external access or a roadmap choice	d93f0b
+wontfix	This will not be worked on	ffffff

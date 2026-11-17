@@ -1,0 +1,6 @@
+{
+  "name": "gh-issue-skills",
+  "description": "Agent skills for a GitHub Issues + Projects v2 workflow: search, file, score (RICE), plan, link, start, PR references and close-out.",
+  "version": "0.1.0",
+  "license": "MIT"
+}
